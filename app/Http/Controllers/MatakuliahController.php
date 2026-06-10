@@ -13,7 +13,7 @@ class MatakuliahController extends Controller
      */
     public function index()
     {
-        $matakuliah = Matakuliah::select('id','nama_matakuliah', 'sks')->get();
+        $matakuliah = Matakuliah::select('id', 'nama_matakuliah', 'sks')->get();
         return view('matakuliah.index', compact('matakuliah'));
     }
 
@@ -22,7 +22,7 @@ class MatakuliahController extends Controller
      */
     public function create()
     {
-        $jurusan = Jurusan::select('id_jurusan','nama_jurusan')->get();
+        $jurusan = Jurusan::select('id_jurusan', 'nama_jurusan')->get();
         return view('matakuliah.create', compact('jurusan'));
     }
 
@@ -32,9 +32,9 @@ class MatakuliahController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'nama_matakuliah' => 'required',
-        'sks' => 'required',
-        'id_jurusan' => 'required|exists:jurusan,id_jurusan'
+            'nama_matakuliah' => 'required',
+            'sks' => 'required',
+            'id_jurusan' => 'required|exists:jurusan,id_jurusan'
         ]);
 
         Matakuliah::create([
@@ -44,7 +44,7 @@ class MatakuliahController extends Controller
         ]);
 
         return redirect()->route('matakuliah.index')
-                        ->with('success', 'Data berhasil ditambah');
+            ->with('success', 'Data berhasil ditambah');
     }
 
     /**
@@ -75,7 +75,7 @@ class MatakuliahController extends Controller
         $matakuliah->update($request->all());
 
         return redirect()->route('matakuliah.index')
-                         ->with('success', 'Data berhasil diupdate');
+            ->with('success', 'Data berhasil diupdate');
     }
 
     /**
@@ -86,6 +86,22 @@ class MatakuliahController extends Controller
         $matakuliah->delete();
 
         return redirect()->route('matakuliah.index')
-                         ->with('success', 'Data berhasil dihapus');
+            ->with('success', 'Data berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $matakuliah = Matakuliah::all();
+        return view('matakuliah.print', compact('matakuliah'));
+    }
+
+    public function exportExcel()
+    {
+        $matakuliah = Matakuliah::all();
+
+        return response()
+            ->view('matakuliah.export', compact('matakuliah')) // Pastikan nama file Blade-nya: export.blade.php
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename=matakuliah.xls'); // Diubah dari .xlsx ke .xls
     }
 }

@@ -14,10 +14,19 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::resource('mahasiswa', MahasiswaController::class);
-    Route::resource('jurusan', JurusanController::class);
-    Route::resource('matakuliah', MatakuliahController::class);
-});
+// ROUTE MAHASISWA (Dari Praktikum Modul)
+Route::get('/mahasiswa/export-csv', [MahasiswaController::class, 'exportCsv'])->name('mahasiswa.export-csv');
+Route::get('/mahasiswa/print', [MahasiswaController::class, 'print'])->name('mahasiswa.print');
+Route::resource('mahasiswa', MahasiswaController::class);
 
-require __DIR__.'/auth.php';
+// ROUTE JURUSAN (Tugas Tambahan)
+Route::get('/jurusan/export-excel', [JurusanController::class, 'exportExcel'])->name('jurusan.export-excel');
+Route::get('/jurusan/print', [JurusanController::class, 'print'])->name('jurusan.print');
+Route::resource('jurusan', JurusanController::class);
+
+// ROUTE MATAKULIAH (Tugas Tambahan)
+Route::get('/matakuliah/export-excel', [MatakuliahController::class, 'exportExcel'])->name('matakuliah.export-excel');
+Route::get('/matakuliah/print', [MatakuliahController::class, 'print'])->name('matakuliah.print');
+Route::resource('matakuliah', MatakuliahController::class);
+
+require __DIR__ . '/auth.php';

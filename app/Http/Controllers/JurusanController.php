@@ -30,7 +30,7 @@ class JurusanController extends Controller
      */
     public function store(Request $request)
     {
-            $request->validate([
+        $request->validate([
             'nama_jurusan' => 'required',
             'akreditasi' => 'required'
         ]);
@@ -41,7 +41,7 @@ class JurusanController extends Controller
         ]);
 
         return redirect()->route('jurusan.index')
-                        ->with('success', 'Data berhasil ditambah');
+            ->with('success', 'Data berhasil ditambah');
     }
 
     /**
@@ -83,6 +83,22 @@ class JurusanController extends Controller
         $jurusan->delete();
 
         return redirect()->route('jurusan.index')
-                         ->with('success', 'Data berhasil dihapus');
+            ->with('success', 'Data berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $jurusan = Jurusan::all();
+        return view('jurusan.print', compact('jurusan'));
+    }
+
+    public function exportExcel()
+    {
+        $jurusan = Jurusan::all();
+
+        return response()
+            ->view('jurusan.export', compact('jurusan')) // Pastikan nama file Blade-nya: export.blade.php
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename=jurusan.xls'); // Diubah dari .xlsx ke .xls
     }
 }

@@ -26,13 +26,12 @@ class MahasiswaController extends Controller
         $jurusan = Jurusan::select('id_jurusan', 'nama_jurusan')->get();
         $matakuliah = Matakuliah::select('id', 'nama_matakuliah', 'sks', 'id_jurusan');
         return view('mahasiswa.create', compact('jurusan', 'matakuliah'));
-
     }
 
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nim' => 'required',
@@ -61,10 +60,10 @@ class MahasiswaController extends Controller
      */
     public function edit(Mahasiswa $mahasiswa)
     {
-            $jurusan = Jurusan::all();
-            $matakuliah = Matakuliah::all();
+        $jurusan = Jurusan::all();
+        $matakuliah = Matakuliah::all();
 
-            return view('mahasiswa.edit', compact('mahasiswa', 'jurusan', 'matakuliah'));
+        return view('mahasiswa.edit', compact('mahasiswa', 'jurusan', 'matakuliah'));
     }
 
     /**
@@ -72,19 +71,18 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
-            $validated = $request->validate([
+        $validated = $request->validate([
             'nim' => 'required',
             'nama' => 'required',
             'id_jurusan' => 'required|exists:jurusan,id_jurusan',
-            ]);
+        ]);
 
-            $mahasiswa->update($validated);
+        $mahasiswa->update($validated);
 
-            // 🔥 update pivot (ganti attach)
-            $mahasiswa->matakuliah()->sync($request->matakuliah ?? []);
+        $mahasiswa->matakuliah()->sync($request->matakuliah ?? []);
 
-            return redirect()->route('mahasiswa.index')
-                            ->with('success', 'Data berhasil diupdate');
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Data berhasil diupdate');
     }
 
     /**
@@ -92,9 +90,26 @@ class MahasiswaController extends Controller
      */
     public function destroy(Mahasiswa $mahasiswa)
     {
-            $mahasiswa->delete();
+        $mahasiswa->delete();
 
-            return redirect()->route('mahasiswa.index')
-                            ->with('success', 'Data berhasil dihapus');
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Data berhasil dihapus');
+    }
+
+    public function print()
+    {
+        $mahasiswa = Mahasiswa::all();
+        return view('mahasiswa.print', compact('mahasiswa'));
+    }
+
+
+    public function exportExcel()
+    {
+        $mahasiswa = Mahasiswa::all();
+
+        return response()
+            ->view('mahasiswa.export', compact('mahasiswa'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename=mahasiswa.xls');
     }
 }
